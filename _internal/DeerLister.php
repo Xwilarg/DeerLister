@@ -1,6 +1,6 @@
 <?php
 
-require_once "Icons.php";
+require_once "extensions/ExtensionManager.php";
 require_once "ParsedownExtension.php";
 
 use Twig\Loader\FilesystemLoader;
@@ -11,12 +11,12 @@ class DeerLister
 {
     private Environment $twig;
 
-    private array $filePreviews;
     private array $config;
+    private ExtensionManager $extManager;
 
     function __construct()
     {
-        $this->filePreviews = [];
+        $this->$extManager = new ExtensionManager();
         $this->config = [];
 
         // setup twig
@@ -129,15 +129,18 @@ class DeerLister
 
             $isFolder = is_dir($file);
 
+            $extension = $isFolder // TODO
+                ? new Extension(ExtensionIconType::Solid, 'fa-folder', null)
+                : $this->$extManager->getExtension(pathinfo($file, PATHINFO_EXTENSION));
             array_push($files,
                 [
                     "name" => $name,
                     "isFolder" => $isFolder,
-                    "icon" => $isFolder ? Icons::getFolderIcon() : Icons::getIcon(pathinfo($file, PATHINFO_EXTENSION)),
+                    "icon" => $extension->getIcon(),
                     "lastModified" => $modified,
                     "size" => filesize($file),
 
-                    "filePreview" => !$isFolder && $this->isFilePreviewable($name) ? $this->pathCombine($relPath, $name) : null
+                    "filePreview" => !$isFolder && $extension->isFilePreviewable() ? $this->pathCombine($relPath, $name) : null
                 ]
             );
         }
@@ -199,45 +202,6 @@ class DeerLister
         return implode("/", array_diff($paths, [""]));
     }
 
-    /**
-     * Returns whether a file is previewable by one of the file previews
-     * 
-     * @param string $filename The name of the file
-     * 
-     * @return bool Whether the file is previewable
-     */
-    private function isFilePreviewable(string $filename): bool
-    {
-        $ext = pathinfo($filename, PATHINFO_EXTENSION);
-
-        foreach ($this->filePreviews as $preview)
-        {
-            if ($preview->doesHandle($filename, $ext))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Registers a new file preview
-     * 
-     * @param string $name The name of the file preview
-     * @param FilePreview $instance An instance of the file preview class
-     */
-    public function registerFilePreview(string $name, FilePreview $instance)
-    {
-        // check if preview is enabled
-        if (isset($this->config["previews"]) && !in_array($name, $this->config["previews"]))
-        {
-            return;
-        }
-
-        array_push($this->filePreviews, $instance);
-    }
-
     public function render(string $directory): string
     {
         // read the directory
@@ -297,14 +261,11 @@ class DeerLister
         // TODO check config forbidden
 
         $filename = pathinfo($file, PATHINFO_BASENAME);
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $ext = $this->$extManager.getExtension(pathinfo($file, PATHINFO_EXTENSION));
 
-        foreach ($this->filePreviews as $preview)
+        if ($ext->isFilePreviewable())
         {
-            if ($preview->doesHandle($filename, $ext))
-            {
-                return $preview->renderPreview($file, $this->twig);
-            }
+            return $ext->renderPreview($file, $this->twig);
         }
 
         http_response_code(404);

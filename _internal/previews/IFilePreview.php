@@ -1,17 +1,7 @@
 <?php
 
-interface FilePreview
+interface IFilePreview
 {
-    /**
-     * Whether the current file preview handles this file
-     * 
-     * @param string $filename The name of the file
-     * @param string $ext The file extension without leading dot
-     * 
-     * @return bool Whether the file preview handles the file
-     */
-    public function doesHandle(string $filename, string $ext): bool;
-
     /**
      * Render the file preview content
      * 
@@ -21,4 +11,6 @@ interface FilePreview
      * @return string The file preview content
      */
     public function renderPreview(string $path, Twig\Environment $twig): string;
+
+    public static function self(): IFilePreview;
 }

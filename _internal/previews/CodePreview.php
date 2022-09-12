@@ -1,35 +1,25 @@
 <?php
 
-require_once "FilePreview.php";
+require_once "IFilePreview.php";
 
 /**
  * Provides previews for code or text
  */
-class CodePreview implements FilePreview
+class CodePreview implements IFilePreview
 {
-    const EXTENSIONS =
-        [
-            "txt", "js", "css", "xml", "json", "toml",
-            "yaml", "cs", "c", "cpp", "sh", "ps1", "bat",
-            "py", "rs", "ts", "lua", "java", "go", "csproj",
-            "kt", "sql", "dart", "rb", "asm", "vba", "fs",
-            "hs", "patch", "map", "def", "bt", "log"
-        ];
-
-    const UNSAFE_EXTENSIONS =
-        [
-            "php"
-        ];
-
-    public function doesHandle(string $filename, string $ext): bool
-    {
-        // TODO allow previews to have a config section and check for unsafe
-
-        return in_array($ext, self::EXTENSIONS);
-    }
-
     public function renderPreview(string $path, Twig\Environment $twig): string
     {
         return $twig->render("previews/code.html.twig", [ "code" => file_get_contents($path) ]);
     }
+
+    public static function self(): IFilePreview
+    {
+        if (CodePreview::$preview === null)
+        {
+            $preview = new CodePreview();
+        }
+        return $preview;
+    }
+
+    private static ?IFilePreview $preview = null;
 }
