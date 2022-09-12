@@ -1,11 +1,11 @@
 <?php
 
 require_once "ExtensionIconType.php";
-require_once "_internal/previews/IFilePreview.php";
+require_once "_internal/previews/FilePreviewInterface.php";
 
 class Extension
 {
-    public function __construct(ExtensionIconType $extensionType, string $extensionName, ?IFilePreview $previewMode) {
+    public function __construct(ExtensionIconType $extensionType, string $extensionName, ?FilePreviewInterface $previewMode) {
         $this->extensionType = $extensionType;
         $this->extensionName = $extensionName;
         $this->previewMode = $previewMode;
@@ -36,5 +36,5 @@ class Extension
 
     private ExtensionIconType $extensionType;
     private string $extensionName;
-    private ?IFilePreview $previewMode;
+    private ?FilePreviewInterface $previewMode;
 }

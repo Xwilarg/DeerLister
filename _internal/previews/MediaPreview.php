@@ -1,11 +1,11 @@
 <?php
 
-require_once "IFilePreview.php";
+require_once "FilePreviewInterface.php";
 
 /**
  * Provides previews for media such as images and videos
  */
-class MediaPreview implements IFilePreview
+class MediaPreview implements FilePreviewInterface
 {
     public function renderPreview(string $path, Twig\Environment $twig): string
     {
@@ -14,7 +14,7 @@ class MediaPreview implements IFilePreview
         return $twig->render("previews/media.html.twig", [ "path" => $path, "isVideo" => $video ]);
     }
 
-    public static function self(): IFilePreview
+    public static function self(): FilePreviewInterface
     {
         if (MediaPreview::$preview === null)
         {
@@ -23,5 +23,5 @@ class MediaPreview implements IFilePreview
         return $preview;
     }
 
-    private static ?IFilePreview $preview = null;
+    private static ?FilePreviewInterface $preview = null;
 }

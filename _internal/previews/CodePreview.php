@@ -1,18 +1,18 @@
 <?php
 
-require_once "IFilePreview.php";
+require_once "FilePreviewInterface.php";
 
 /**
  * Provides previews for code or text
  */
-class CodePreview implements IFilePreview
+class CodePreview implements FilePreviewInterface
 {
     public function renderPreview(string $path, Twig\Environment $twig): string
     {
         return $twig->render("previews/code.html.twig", [ "code" => file_get_contents($path) ]);
     }
 
-    public static function self(): IFilePreview
+    public static function self(): FilePreviewInterface
     {
         if (CodePreview::$preview === null)
         {
@@ -21,5 +21,5 @@ class CodePreview implements IFilePreview
         return $preview;
     }
 
-    private static ?IFilePreview $preview = null;
+    private static ?FilePreviewInterface $preview = null;
 }

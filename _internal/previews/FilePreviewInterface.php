@@ -1,6 +1,6 @@
 <?php
 
-interface IFilePreview
+interface FilePreviewInterface
 {
     /**
      * Render the file preview content
@@ -12,5 +12,5 @@ interface IFilePreview
      */
     public function renderPreview(string $path, Twig\Environment $twig): string;
 
-    public static function self(): IFilePreview;
+    public static function self(): FilePreviewInterface;
 }
