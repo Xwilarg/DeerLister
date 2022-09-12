@@ -13,10 +13,12 @@ class DeerLister
 
     private array $config;
     private ExtensionManager $extManager;
+    private Extension $extFolder;
 
     function __construct()
     {
-        $this->$extManager = new ExtensionManager();
+        $this->extManager = new ExtensionManager();
+        $this->extFolder = new Extension(ExtensionIconType::Solid, 'fa-folder', null);
         $this->config = [];
 
         // setup twig
@@ -129,9 +131,9 @@ class DeerLister
 
             $isFolder = is_dir($file);
 
-            $extension = $isFolder // TODO
-                ? new Extension(ExtensionIconType::Solid, 'fa-folder', null)
-                : $this->$extManager->getExtension(pathinfo($file, PATHINFO_EXTENSION));
+            $extension = $isFolder
+                ? $this->extFolder
+                : $this->extManager->getExtension(pathinfo($file, PATHINFO_EXTENSION));
             array_push($files,
                 [
                     "name" => $name,
@@ -261,7 +263,7 @@ class DeerLister
         // TODO check config forbidden
 
         $filename = pathinfo($file, PATHINFO_BASENAME);
-        $ext = $this->$extManager->getExtension(pathinfo($file, PATHINFO_EXTENSION));
+        $ext = $this->extManager->getExtension(pathinfo($file, PATHINFO_EXTENSION));
 
         if ($ext->isFilePreviewable())
         {
