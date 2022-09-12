@@ -9,7 +9,7 @@ class ExtensionManager
         $this->extensions =
         [
             'txt' => new Extension(ExtensionIconType::Solid, 'fa-file-lines', CodePreview::self()),
-            'json' => new Extension(ExtensionIconType::Solid, 'fa-file-lines', CodePreview::self())
+            'json' => new Extension(ExtensionIconType::Solid, 'fa-file', CodePreview::self())
         ];
 
         $this->default = new Extension(ExtensionIconType::Solid, 'fa-file', null);
