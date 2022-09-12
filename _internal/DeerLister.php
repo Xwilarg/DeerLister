@@ -261,7 +261,7 @@ class DeerLister
         // TODO check config forbidden
 
         $filename = pathinfo($file, PATHINFO_BASENAME);
-        $ext = $this->$extManager.getExtension(pathinfo($file, PATHINFO_EXTENSION));
+        $ext = $this->$extManager->getExtension(pathinfo($file, PATHINFO_EXTENSION));
 
         if ($ext->isFilePreviewable())
         {

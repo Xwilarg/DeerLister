@@ -8,26 +8,25 @@ class Extension
     public function __construct(ExtensionIconType $extensionType, string $extensionName, ?IFilePreview $previewMode) {
         $this->extensionType = $extensionType;
         $this->extensionName = $extensionName;
-        $this->$previewMode = $previewMode;
+        $this->previewMode = $previewMode;
     }
 
     public function getIcon()
     {
         $category = "";
-        switch ($this->$extensionType)
+        switch ($this->extensionType)
         {
-            case ExtensionIconType::Solid: $category = "solids";
-            case ExtensionIconType::Brand: $category = "brands";
-            default: $category = "meh";
-//            default: throw new Exception('Invalid extension type ' . $this->$extensionType);
+            case ExtensionIconType::Solid: $category = 'fa-solid'; break;
+            case ExtensionIconType::Brand: $category = 'fa-brand'; break;
+            default: throw new Exception('Invalid extension type');
         }
 
-        return $category . " " . $this->$extensionName;
+        return $category . " " . $this->extensionName;
     }
 
     public function isFilePreviewable(): bool
     {
-        return $this->$previewMode !== null;
+        return $this->previewMode !== null;
     }
 
     public function renderPreview(string $path, Twig\Environment $twig): string
@@ -37,5 +36,5 @@ class Extension
 
     private ExtensionIconType $extensionType;
     private string $extensionName;
-    private ?FilePreview $previewMode;
+    private ?IFilePreview $previewMode;
 }
